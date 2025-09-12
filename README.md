@@ -1,12 +1,33 @@
-# Xodex (CLI Python) – OpenAI | Gemini | Grok
+# Xodex (CLI Python) – DeepSeek (default) + OpenAI/Gemini/Grok
 
-Xodex é um agente de programação para terminal, com seleção de provedor e ferramentas básicas (ler/escrever arquivos, executar comandos) e injeção de **contexto de projeto** por glob.
+Xodex é um agente de programação para terminal. **DeepSeek** é o provedor padrão (economy), mas você também pode usar **OpenAI**, **Gemini** ou **Grok**.
+
+![Xodex Logo](assets/logo_wordmark.png)
+![Xodex Badge](assets/badge_xodex.png)
+
+```txt
+ __   __           _           
+ \ \ / /__  _   _ | |__   ____ 
+  \ V / _ \| | | || '_ \ / _  |
+   | | (_) | |_| || | | | (_| |
+   |_|\___/ \__,_||_| |_|\__,_|
+              XODEX  •  CLI
+```
+
+## Providers & Perfis
+- **DeepSeek (default)** — custo mínimo e excelente para código/raciocínio.
+  - Modelos: `deepseek-reasoner` (R1, raciocínio) ou `deepseek-chat` (V3).
+- **OpenAI** — compatível via SDK oficial `openai`.
+- **Gemini** — `google-generativeai`.
+- **Grok (xAI)** — endpoint compatível OpenAI.
+
+> O Xodex mostra o **modelo em uso** diretamente no prompt de resposta do REPL: `assistant [deepseek-reasoner]> ...`
 
 ## Requisitos
 - Python 3.10+
-- Chaves válidas dos provedores que quiser usar
+- Defina as chaves do(s) provedor(es) que deseja usar
 
-## Instalação
+## Instalação (local)
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
@@ -18,47 +39,64 @@ cp .env.example .env
 ## Execução
 ```bash
 export PYTHONPATH=.
-python src/main.py
+python -m xodex.main
 ```
 
-## REPL – Comandos
+No REPL:
 - `:q` — sair
 - `:clear` — limpar histórico
-- `:help` — ajuda dos comandos
+- `:help` — ajuda
 - `:tool read <path>` — ler arquivo
-- `:tool write <path>` — escrever arquivo (digite o conteúdo e finalize com uma linha `EOF`)
+- `:tool write <path>` — escrever arquivo (finalize com linha `EOF`)
 - `:tool run <cmd>` — executar comando **com confirmação**
-- `:git status` — status do repo
-- `:git branches` — lista branches
-- `:git checkout <branch>` — muda de branch
-- `:git new-branch <name>` — cria e muda para nova branch
-- `:git commit "mensagem"` — commit com `git add -A`
+- `:git status` | `:git branches` | `:git checkout <branch>` | `:git new-branch <name>` | `:git commit "mensagem"`
 
-## Configuração
-- Selecione o provedor em `AGENT_PROVIDER` (`openai`, `gemini`, `grok`).
-- Ajuste `CONTEXT_GLOBS` e `MAX_CONTEXT_CHARS` para o tamanho do contexto injetado no prompt.
+## Configuração de Providers
+Edite `.env` (DeepSeek é o padrão):
 
-## Notas de segurança
-- `:tool run` pede confirmação por padrão. Para comandos destrutivos, revise e confirme conscientemente.
+```dotenv
+# Seleção do provedor (deepseek | openai | gemini | grok)
+AGENT_PROVIDER=deepseek
 
+# DeepSeek (padrão)
+DEEPSEEK_API_KEY=sk-...
+DEEPSEEK_MODEL=deepseek-reasoner
+DEEPSEEK_BASE_URL=https://api.deepseek.com
 
----
+# OpenAI (opcional)
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4.1-mini
+OPENAI_BASE_URL=https://api.openai.com/v1
+
+# Gemini (opcional)
+GEMINI_API_KEY=AIza...
+GEMINI_MODEL=gemini-1.5-pro
+
+# Grok (opcional)
+GROK_API_KEY=xaI-...
+GROK_MODEL=grok-2
+GROK_BASE_URL=https://api.x.ai/v1
+
+# Contexto do projeto
+CONTEXT_GLOBS=src/**/*.py,**/*.md
+MAX_CONTEXT_CHARS=20000
+```
 
 ## Instalação global via `pipx`
 ```bash
 pipx install .
-# depois
 xodex
 ```
 
-Para atualizar a partir de um diretório local:
-```bash
-pipx reinstall xodex-cli --pip-args='-U .'
-```
-
-## Uso com Docker
+## Docker
 ```bash
 docker build -t xodex-cli:local .
 docker run --rm -it --env-file .env -v "$PWD":/work -w /work xodex-cli:local
 ```
-Dica: monte seu repositório em `/work` para o agente ter acesso ao contexto e às ferramentas (`:tool run`, `:git ...`).
+Dica: monte seu repo em `/work` para o Xodex acessar os arquivos e ferramentas.
+
+---
+
+### Créditos
+- Tipografia do wordmark gerada programaticamente para este projeto.
+- Ícone e badge simples incluídos em `assets/`.

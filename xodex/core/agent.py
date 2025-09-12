@@ -3,6 +3,7 @@ from xodex.config import cfg
 from xodex.prompts.system import SYSTEM_PROMPT
 from xodex.core.context import build_context
 from xodex.providers import openai_provider, gemini_provider, grok_provider
+from xodex.providers import deepseek_provider
 
 Message = Dict[str, str]
 
@@ -10,10 +11,25 @@ PROV_MAP = {
     "openai": openai_provider,
     "gemini": gemini_provider,
     "grok": grok_provider,
+    "deepseek": deepseek_provider,
 }
 
 def _provider():
-    return PROV_MAP.get(cfg["provider"], openai_provider)
+    return PROV_MAP.get(cfg["provider"], deepseek_provider)
+
+def current_model() -> str:
+    """Retorna a string do modelo efetivo com base no provider selecionado."""
+    p = cfg["provider"]
+    if p == "deepseek":
+        return cfg["deepseek"]["model"] or "deepseek-reasoner"
+    if p == "openai":
+        return cfg["openai"]["model"]
+    if p == "gemini":
+        return cfg["gemini"]["model"]
+    if p == "grok":
+        return cfg["grok"]["model"]
+    # fallback seguro
+    return "unknown-model"
 
 async def respond(history: List[Message], stream: bool = True):
     ctx = build_context()

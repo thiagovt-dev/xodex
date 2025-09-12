@@ -5,6 +5,8 @@ from prompt_toolkit.patch_stdout import patch_stdout
 from typing import List, Dict
 from xodex.core.agent import respond
 from xodex.core import tools as Tools
+from xodex.core.agent import respond, current_model
+
 
 Message = Dict[str, str]
 
@@ -140,8 +142,8 @@ async def start_repl():
 
         try:
             stream_obj = await respond(history, stream=True)
-            print("assistant>", end=" ", flush=True)
-
+            model_tag = current_model()
+            print(f"assistant [{model_tag}]>", end=" ", flush=True)
             if hasattr(stream_obj, "__aiter__") or hasattr(stream_obj, "__iter__"):
                 try:
                     for chunk in stream_obj:  # type: ignore
