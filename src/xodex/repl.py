@@ -1,6 +1,5 @@
 import asyncio
 import os
-import sys
 import time
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import InMemoryHistory
@@ -9,7 +8,6 @@ from prompt_toolkit.formatted_text import HTML
 from typing import List, Dict
 from xodex.core.agent import respond
 from xodex.core import tools as Tools
-from xodex.core.agent import respond, current_model, current_provider
 
 
 Message = Dict[str, str]
@@ -25,13 +23,14 @@ HELP = (
     "\033[36m/branches\033[0m                listar branches do git\n"
     "\033[36m/checkout <branch>\033[0m       trocar para uma branch\n"
     "\033[36m/new-branch <nome>\033[0m       criar e mudar para nova branch\n"
-    "\033[36m/commit \"mensagem\"\033[0m      fazer commit com -A\n"
+    '\033[36m/commit "mensagem"\033[0m      fazer commit com -A\n'
     "\033[36m/read <arquivo>\033[0m          ler conteúdo de um arquivo\n"
     "\033[36m/write <arquivo>\033[0m         escrever arquivo (terminar com EOF)\n"
     "\033[36m/run <comando>\033[0m           executar comando (pede confirmação)\n"
     "\033[36m/ask <texto>\033[0m            perguntar ao modelo (sem histórico)\n"
     "\033[36m/agent\033[0m                   alternar modo agente\n"
 )
+
 
 async def _confirm(prompt: str) -> bool:
     session = PromptSession()
@@ -42,38 +41,50 @@ async def _confirm(prompt: str) -> bool:
     except Exception:
         return False
 
+
 async def _handle_read(cmd: str):
     parts = cmd.split(maxsplit=1)
     if len(parts) < 2:
-        print("uso: /read <arquivo>"); return
+        print("uso: /read <arquivo>")
+        return
     res = Tools.read_file(parts[1])
-    if res.get("ok"): print(res.get("output", ""))
-    else: print("[erro]", res.get("error"))
+    if res.get("ok"):
+        print(res.get("output", ""))
+    else:
+        print("[erro]", res.get("error"))
+
 
 async def _handle_write(cmd: str):
     parts = cmd.split(maxsplit=1)
     if len(parts) < 2:
-        print("uso: /write <arquivo>"); return
+        print("uso: /write <arquivo>")
+        return
     path = parts[1]
     print("Digite o conteúdo. Finalize com uma linha contendo apenas 'EOF'.")
     lines: List[str] = []
     while True:
         line = input()
-        if line.strip() == "EOF": break
+        if line.strip() == "EOF":
+            break
         lines.append(line)
     content = "\n".join(lines)
     if AGENT_MODE:
         ok = await _confirm(f"Confirmar escrita em {path}? [y/N] ")
         if not ok:
-            print("(cancelado)"); return
+            print("(cancelado)")
+            return
     res = Tools.write_file(path, content)
-    if res.get("ok"): print(res.get("output"))
-    else: print("[erro]", res.get("error"))
+    if res.get("ok"):
+        print(res.get("output"))
+    else:
+        print("[erro]", res.get("error"))
+
 
 async def _handle_run(cmd: str):
     parts = cmd.split(maxsplit=1)
     if len(parts) < 2:
-        print("uso: /run <comando>"); return
+        print("uso: /run <comando>")
+        return
     cmdline = parts[1]
     if await _confirm(f"Confirmar execução de: {cmdline}? [y/N] "):
         res = Tools.run(cmdline)
@@ -84,61 +95,76 @@ async def _handle_run(cmd: str):
     else:
         print("(cancelado)")
 
+
 async def _handle_status():
     res = Tools.git_status()
     print(res.get("output", res.get("error", "")))
+
 
 async def _handle_branches():
     res = Tools.git_branches()
     print(res.get("output", res.get("error", "")))
 
+
 async def _handle_checkout(cmd: str):
     parts = cmd.split(maxsplit=1)
     if len(parts) < 2:
-        print("uso: /checkout <branch>"); return
+        print("uso: /checkout <branch>")
+        return
     if AGENT_MODE:
         ok = await _confirm(f"Confirmar checkout para {parts[1]}? [y/N] ")
         if not ok:
-            print("(cancelado)"); return
+            print("(cancelado)")
+            return
     res = Tools.git_checkout(parts[1])
     print(res.get("output", res.get("error", "")))
+
 
 async def _handle_new_branch(cmd: str):
     parts = cmd.split(maxsplit=1)
     if len(parts) < 2:
-        print("uso: /new-branch <nome>"); return
+        print("uso: /new-branch <nome>")
+        return
     if AGENT_MODE:
         ok = await _confirm(f"Confirmar criação da branch {parts[1]}? [y/N] ")
         if not ok:
-            print("(cancelado)"); return
+            print("(cancelado)")
+            return
     res = Tools.git_new_branch(parts[1])
     print(res.get("output", res.get("error", "")))
+
 
 async def _handle_commit(cmd: str):
     parts = cmd.split(maxsplit=1)
     if len(parts) < 2:
-        print('uso: /commit "mensagem"'); return
+        print('uso: /commit "mensagem"')
+        return
     msg = parts[1].strip()
     if not (msg.startswith('"') and msg.endswith('"')):
-        print('coloque a mensagem entre aspas: /commit "minha msg"'); return
+        print('coloque a mensagem entre aspas: /commit "minha msg"')
+        return
     msg = msg[1:-1]
     if AGENT_MODE:
         ok = await _confirm(f"Confirmar commit: {msg}? [y/N] ")
         if not ok:
-            print("(cancelado)"); return
+            print("(cancelado)")
+            return
     res = Tools.git_commit(msg, add_all=True)
     print(res.get("output", res.get("error", "")))
+
 
 async def _handle_ask(cmd: str):
     parts = cmd.split(maxsplit=1)
     if len(parts) < 2:
-        print("uso: /ask <texto>"); return
+        print("uso: /ask <texto>")
+        return
     question = parts[1]
     try:
         ans = await respond([{"role": "user", "content": question}], stream=False)
         print(f"\033[36mXodex\033[0m> {ans}")
     except Exception as e:
         print(f"[erro] {e}")
+
 
 async def _handle_agent(_: str):
     global AGENT_MODE
@@ -152,21 +178,21 @@ async def _handle_agent(_: str):
     else:
         print("(modo agente não ativado)")
 
+
 class ThinkingIndicator:
     def __init__(self):
         self.is_running = False
         self.start_time = None
         self.task = None
-    
+
     def start(self):
         """Inicia o indicador de thinking"""
         self.is_running = True
         self.start_time = time.time()
         self.task = asyncio.create_task(self._animate())
         return self.task
-    
+
     async def stop(self):
-        """Para o indicador de thinking"""
         self.is_running = False
         if self.task:
             self.task.cancel()
@@ -174,24 +200,27 @@ class ThinkingIndicator:
                 await self.task
             except asyncio.CancelledError:
                 pass
-        # Limpa a linha do thinking
         print("\r" + " " * 50 + "\r", end="", flush=True)
-    
+
     async def _animate(self):
-        """Anima o indicador com timer dinâmico"""
         thinking_chars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
         print()
-        
+
         try:
             char_index = 0
             while self.is_running:
                 elapsed = int(time.time() - self.start_time)
                 char = thinking_chars[char_index % len(thinking_chars)]
-                print(f"\r\033[90m▌ {char} Working ({elapsed}s • Esc to interrupt)\033[0m", end="", flush=True)
+                print(
+                    f"\r\033[90m▌ {char} Working ({elapsed}s • Esc to interrupt)\033[0m",
+                    end="",
+                    flush=True,
+                )
                 char_index += 1
                 await asyncio.sleep(0.1)
         except asyncio.CancelledError:
             pass
+
 
 def _print_welcome():
     current_path = os.getcwd()
@@ -209,6 +238,7 @@ def _print_welcome():
     print("\033[90m/quit - sai do CLI\033[0m")
     print()
 
+
 async def start_repl():
     session = PromptSession(history=InMemoryHistory())
     history: List[Message] = []
@@ -217,8 +247,10 @@ async def start_repl():
         try:
             with patch_stdout():
                 line = await session.prompt_async(
-                    "\n",  
-                    placeholder=HTML('<ansibrightblack>Pergunte algo ao Xodex</ansibrightblack>')
+                    "\n",
+                    placeholder=HTML(
+                        "<ansibrightblack>Pergunte algo ao Xodex</ansibrightblack>"
+                    ),
                 )
         except (EOFError, KeyboardInterrupt):
             print("\nAté mais!")
@@ -226,7 +258,7 @@ async def start_repl():
         text = (line or "").strip()
         if not text:
             continue
-        
+
         if text == "/quit" or text == "/q":
             print("Até mais!")
             break
@@ -268,29 +300,22 @@ async def start_repl():
             await _handle_run(text)
             continue
 
-        # Mostra a pergunta do usuário
         print(f"\n\033[34mUser\033[0m> {text}")
-        
+
         history.append({"role": "user", "content": text})
 
         thinking = ThinkingIndicator()
-        
+
         try:
-            # Inicia o thinking em paralelo
             thinking.start()
-            
-            # Pequeno delay para garantir que o thinking apareça
+
             await asyncio.sleep(0.2)
-            
-            # Faz a requisição para a API
+
             stream_obj = await respond(history, stream=True)
-            
-            # Para o thinking quando a resposta chegar
+
             await thinking.stop()
-            
-            model_tag = current_model()
-            provider_tag = current_provider()
-            print(f"\033[36mXodex\033[0m>", end=" ", flush=True)
+
+            print("\033[36mXodex\033[0m>", end=" ", flush=True)
             if hasattr(stream_obj, "__aiter__") or hasattr(stream_obj, "__iter__"):
                 try:
                     for chunk in stream_obj:  # type: ignore
@@ -305,7 +330,11 @@ async def start_repl():
                                 delta = None
                         if delta is None and isinstance(chunk, (bytes, str)):
                             try:
-                                s = chunk.decode("utf-8") if isinstance(chunk, bytes) else chunk
+                                s = (
+                                    chunk.decode("utf-8")
+                                    if isinstance(chunk, bytes)
+                                    else chunk
+                                )
                             except Exception:
                                 s = ""
                             if s:
@@ -313,7 +342,7 @@ async def start_repl():
                         if delta:
                             print(delta, end="", flush=True)
                 except TypeError:
-                    async for chunk in stream_obj:  
+                    async for chunk in stream_obj:
                         try:
                             print(chunk.text, end="", flush=True)
                         except Exception:

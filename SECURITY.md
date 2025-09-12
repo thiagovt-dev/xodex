@@ -1,7 +1,7 @@
 # Política de Segurança
 
 - **Não** abra issue pública para relatar vulnerabilidades.
-- Use **Private vulnerability reporting** do GitHub **ou** email: security@exemplo.com
+- Use **Private vulnerability reporting** do GitHub **ou** email: thiagovt.dev@gmail.com
 - SLA inicial: resposta em até 72h.
 - Versões suportadas: últimas 2 tags `v*`.
 

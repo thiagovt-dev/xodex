@@ -2,6 +2,7 @@ from pathlib import Path
 import glob
 from xodex.config import cfg
 
+
 def build_context() -> str:
     patterns = cfg["context"]["globs"]
     max_chars = cfg["context"]["max_chars"]
