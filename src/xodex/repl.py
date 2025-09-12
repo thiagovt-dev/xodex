@@ -1,5 +1,7 @@
 import asyncio
 import os
+import sys
+import time
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.patch_stdout import patch_stdout
@@ -107,8 +109,48 @@ async def _handle_commit(cmd: str):
     res = Tools.git_commit(msg, add_all=True)
     print(res.get("output", res.get("error", "")))
 
+class ThinkingIndicator:
+    def __init__(self):
+        self.is_running = False
+        self.start_time = None
+        self.task = None
+    
+    def start(self):
+        """Inicia o indicador de thinking"""
+        self.is_running = True
+        self.start_time = time.time()
+        self.task = asyncio.create_task(self._animate())
+        return self.task
+    
+    async def stop(self):
+        """Para o indicador de thinking"""
+        self.is_running = False
+        if self.task:
+            self.task.cancel()
+            try:
+                await self.task
+            except asyncio.CancelledError:
+                pass
+        # Limpa a linha do thinking
+        print("\r" + " " * 50 + "\r", end="", flush=True)
+    
+    async def _animate(self):
+        """Anima o indicador com timer dinâmico"""
+        thinking_chars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+        print()
+        
+        try:
+            char_index = 0
+            while self.is_running:
+                elapsed = int(time.time() - self.start_time)
+                char = thinking_chars[char_index % len(thinking_chars)]
+                print(f"\r\033[90m▌ {char} Working ({elapsed}s • Esc to interrupt)\033[0m", end="", flush=True)
+                char_index += 1
+                await asyncio.sleep(0.1)
+        except asyncio.CancelledError:
+            pass
+
 def _print_welcome():
-    """Exibe a mensagem de boas-vindas estilizada"""
     current_path = os.getcwd()
     print()
     print("🚀 Bem vindo ao Xodex CLI")
@@ -130,6 +172,7 @@ async def start_repl():
         try:
             with patch_stdout():
                 line = await session.prompt_async(
+                    "\n",  
                     placeholder=HTML('<ansibrightblack>Pergunte algo ao Xodex</ansibrightblack>')
                 )
         except (EOFError, KeyboardInterrupt):
@@ -139,7 +182,6 @@ async def start_repl():
         if not text:
             continue
         
-        # Comandos com "/"
         if text == "/quit" or text == "/q":
             print("Até mais!")
             break
@@ -175,13 +217,29 @@ async def start_repl():
             await _handle_run(text)
             continue
 
+        # Mostra a pergunta do usuário
+        print(f"\n\033[34mUser\033[0m> {text}")
+        
         history.append({"role": "user", "content": text})
 
+        thinking = ThinkingIndicator()
+        
         try:
+            # Inicia o thinking em paralelo
+            thinking.start()
+            
+            # Pequeno delay para garantir que o thinking apareça
+            await asyncio.sleep(0.2)
+            
+            # Faz a requisição para a API
             stream_obj = await respond(history, stream=True)
+            
+            # Para o thinking quando a resposta chegar
+            await thinking.stop()
+            
             model_tag = current_model()
             provider_tag = current_provider()
-            print(f"assistente [{provider_tag}]>", end=" ", flush=True)
+            print(f"\033[36mXodex\033[0m>", end=" ", flush=True)
             if hasattr(stream_obj, "__aiter__") or hasattr(stream_obj, "__iter__"):
                 try:
                     for chunk in stream_obj:  # type: ignore
@@ -204,7 +262,7 @@ async def start_repl():
                         if delta:
                             print(delta, end="", flush=True)
                 except TypeError:
-                    async for chunk in stream_obj:  # type: ignore
+                    async for chunk in stream_obj:  
                         try:
                             print(chunk.text, end="", flush=True)
                         except Exception:
@@ -214,4 +272,5 @@ async def start_repl():
                 print(stream_obj)
                 history.append({"role": "assistant", "content": str(stream_obj)})
         except Exception as e:
+            await thinking.stop()
             print(f"\n[erro] {e}")

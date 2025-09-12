@@ -28,7 +28,6 @@ def current_model() -> str:
         return cfg["gemini"]["model"]
     if p == "grok":
         return cfg["grok"]["model"]
-    # fallback seguro
     return "unknown-model"
 
 def current_provider() -> str:
