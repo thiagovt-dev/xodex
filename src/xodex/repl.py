@@ -204,6 +204,8 @@ def _print_welcome():
     print("\033[90m/status - mostra status do repositório git\033[0m")
     print("\033[90m/help - mostra todos os comandos disponíveis\033[0m")
     print("\033[90m/run - executa um comando\033[0m")
+    print("\033[90m/ask - pergunta ao modelo\033[0m")
+    print("\033[90m/agent - alterna modo agente\033[0m")
     print("\033[90m/quit - sai do CLI\033[0m")
     print()
 
