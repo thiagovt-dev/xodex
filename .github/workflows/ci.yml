@@ -12,7 +12,7 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -25,6 +25,9 @@ jobs:
           pip install -r requirements.txt
           pip install ruff black pytest
 
+      - name: Install package in development mode
+        run: pip install -e .
+
       - name: Run ruff linter
         run: ruff check .
 
@@ -32,4 +35,4 @@ jobs:
         run: black --check .
 
       - name: Run tests
-        run: pytest -q
+        run: pytest tests/ -v --tb=short

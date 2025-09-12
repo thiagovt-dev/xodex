@@ -4,7 +4,6 @@ from xodex.config import cfg
 
 Message = Dict[str, str]
 
-# Assume endpoint OpenAI-compatible
 
 async def chat(messages: list[Message], stream: bool = True):
     url = f"{cfg['grok']['base_url'].rstrip('/')}/chat/completions"

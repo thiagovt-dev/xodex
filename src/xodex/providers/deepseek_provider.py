@@ -13,7 +13,9 @@ client = OpenAI(
 async def chat(messages: list[Message], stream: bool = True):
     model = cfg["deepseek"]["model"] or "deepseek-reasoner"
     if stream:
-        return client.chat.completions.create(model=model, messages=messages, stream=True)
+        return client.chat.completions.create(
+            model=model, messages=messages, stream=True
+        )
     else:
         comp = client.chat.completions.create(model=model, messages=messages)
         return comp.choices[0].message.content or ""
