@@ -1,7 +1,3 @@
-# Xodex – DeepSeek (default) + OpenAI/Gemini/Grok
-
-Xodex é um agente de programação para terminal. **DeepSeek** é o provedor padrão (economy), mas você também pode usar **OpenAI**, **Gemini** ou **Grok**.
-
 <p align="center">
   <img src="assets/logo_wordmark.png" alt="Xodex" width="380" />
 </p>
@@ -10,6 +6,10 @@ Xodex é um agente de programação para terminal. **DeepSeek** é o provedor pa
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" alt="Python 3.10+"></a>
   <a href="#"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT"></a>
 </p>
+# Xodex – DeepSeek (default) + OpenAI/Gemini/Grok
+
+Xodex é um agente de programação para terminal. **DeepSeek** é o provedor padrão (economy), mas você também pode usar **OpenAI**, **Gemini** ou **Grok**.
+
 
 
 ## Providers & Perfis
