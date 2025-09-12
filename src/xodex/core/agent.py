@@ -31,6 +31,9 @@ def current_model() -> str:
     # fallback seguro
     return "unknown-model"
 
+def current_provider() -> str:
+    return cfg["provider"]
+
 async def respond(history: List[Message], stream: bool = True):
     ctx = build_context()
     system = SYSTEM_PROMPT + (f"\n\n[PROJECT CONTEXT]\n{ctx}" if ctx else "")

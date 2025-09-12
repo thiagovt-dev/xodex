@@ -20,7 +20,7 @@ Xodex é um agente de programação para terminal. **DeepSeek** é o provedor pa
 - **Gemini** — `google-generativeai`.
 - **Grok (xAI)** — endpoint compatível OpenAI.
 
-> O Xodex mostra o **modelo em uso** diretamente no prompt de resposta do REPL: `assistant [deepseek-reasoner]> ...`
+> O Xodex mostra o **modelo em uso** diretamente no prompt de resposta do REPL: `assistente [deepseek]> ...`
 
 ## Requisitos
 - Python 3.10+
