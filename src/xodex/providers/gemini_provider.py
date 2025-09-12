@@ -23,7 +23,7 @@ async def chat(messages: list[Message], stream: bool = True):
     chat = model.start_chat(history=history)
     if stream:
         res = chat.send_message(sys, stream=True)
-        return res  
+        return res
     else:
         res = chat.send_message(sys)
         return res.text
