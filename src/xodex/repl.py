@@ -14,6 +14,8 @@ from xodex.core.agent import respond, current_model, current_provider
 
 Message = Dict[str, str]
 
+AGENT_MODE = False
+
 HELP = (
     "\033[1mComandos disponíveis:\033[0m\n\n"
     "\033[36m/quit\033[0m                    sair do CLI\n"
@@ -27,6 +29,8 @@ HELP = (
     "\033[36m/read <arquivo>\033[0m          ler conteúdo de um arquivo\n"
     "\033[36m/write <arquivo>\033[0m         escrever arquivo (terminar com EOF)\n"
     "\033[36m/run <comando>\033[0m           executar comando (pede confirmação)\n"
+    "\033[36m/ask <texto>\033[0m            perguntar ao modelo (sem histórico)\n"
+    "\033[36m/agent\033[0m                   alternar modo agente\n"
 )
 
 async def _confirm(prompt: str) -> bool:
@@ -58,6 +62,10 @@ async def _handle_write(cmd: str):
         if line.strip() == "EOF": break
         lines.append(line)
     content = "\n".join(lines)
+    if AGENT_MODE:
+        ok = await _confirm(f"Confirmar escrita em {path}? [y/N] ")
+        if not ok:
+            print("(cancelado)"); return
     res = Tools.write_file(path, content)
     if res.get("ok"): print(res.get("output"))
     else: print("[erro]", res.get("error"))
@@ -88,6 +96,10 @@ async def _handle_checkout(cmd: str):
     parts = cmd.split(maxsplit=1)
     if len(parts) < 2:
         print("uso: /checkout <branch>"); return
+    if AGENT_MODE:
+        ok = await _confirm(f"Confirmar checkout para {parts[1]}? [y/N] ")
+        if not ok:
+            print("(cancelado)"); return
     res = Tools.git_checkout(parts[1])
     print(res.get("output", res.get("error", "")))
 
@@ -95,6 +107,10 @@ async def _handle_new_branch(cmd: str):
     parts = cmd.split(maxsplit=1)
     if len(parts) < 2:
         print("uso: /new-branch <nome>"); return
+    if AGENT_MODE:
+        ok = await _confirm(f"Confirmar criação da branch {parts[1]}? [y/N] ")
+        if not ok:
+            print("(cancelado)"); return
     res = Tools.git_new_branch(parts[1])
     print(res.get("output", res.get("error", "")))
 
@@ -106,8 +122,35 @@ async def _handle_commit(cmd: str):
     if not (msg.startswith('"') and msg.endswith('"')):
         print('coloque a mensagem entre aspas: /commit "minha msg"'); return
     msg = msg[1:-1]
+    if AGENT_MODE:
+        ok = await _confirm(f"Confirmar commit: {msg}? [y/N] ")
+        if not ok:
+            print("(cancelado)"); return
     res = Tools.git_commit(msg, add_all=True)
     print(res.get("output", res.get("error", "")))
+
+async def _handle_ask(cmd: str):
+    parts = cmd.split(maxsplit=1)
+    if len(parts) < 2:
+        print("uso: /ask <texto>"); return
+    question = parts[1]
+    try:
+        ans = await respond([{"role": "user", "content": question}], stream=False)
+        print(f"\033[36mXodex\033[0m> {ans}")
+    except Exception as e:
+        print(f"[erro] {e}")
+
+async def _handle_agent(_: str):
+    global AGENT_MODE
+    if AGENT_MODE:
+        AGENT_MODE = False
+        print("Modo agente desativado.")
+        return
+    if await _confirm("Permitir que o agente aplique alterações? [y/N] "):
+        AGENT_MODE = True
+        print("Modo agente ativado.")
+    else:
+        print("(modo agente não ativado)")
 
 class ThinkingIndicator:
     def __init__(self):
@@ -197,6 +240,12 @@ async def start_repl():
             continue
         if text == "/branches":
             await _handle_branches()
+            continue
+        if text == "/agent":
+            await _handle_agent(text)
+            continue
+        if text.startswith("/ask "):
+            await _handle_ask(text)
             continue
         if text.startswith("/checkout "):
             await _handle_checkout(text)

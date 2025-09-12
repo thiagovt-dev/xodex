@@ -42,13 +42,15 @@ python -m xodex.main
 ```
 
 No REPL:
-- `:q` — sair
-- `:clear` — limpar histórico
-- `:help` — ajuda
-- `:tool read <path>` — ler arquivo
-- `:tool write <path>` — escrever arquivo (finalize com linha `EOF`)
-- `:tool run <cmd>` — executar comando **com confirmação**
-- `:git status` | `:git branches` | `:git checkout <branch>` | `:git new-branch <name>` | `:git commit "mensagem"`
+- `/q` — sair
+- `/clear` — limpar histórico
+- `/help` — ajuda
+- `/read <path>` — ler arquivo
+- `/write <path>` — escrever arquivo (finalize com linha `EOF`)
+- `/run <cmd>` — executar comando **com confirmação**
+- `/agent` — alterna modo agente (ações pedem permissão)
+- `/ask <texto>` — pergunta ao modelo sem usar histórico
+- `/status` | `/branches` | `/checkout <branch>` | `/new-branch <name>` | `/commit "mensagem"`
 
 ## Configuração de Providers
 Edite `.env` (DeepSeek é o padrão):
