@@ -1,0 +1,21 @@
+{
+  "name": "@thiagovt-dev/xodex-cli",
+  "version": "0.1.0",
+  "description": "Wrapper CLI (Node) para o Xodex (core em Python).",
+  "bin": {
+    "xodex": "index.js"
+  },
+  "files": ["index.js", "README.md"],
+  "license": "MIT",
+  "author": "Thiago Vasconcelos Teixeira",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thiagovt-dev/xodex.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thiagovt-dev/xodex/issues"
+  },
+  "homepage": "https://github.com/thiagovt-dev/xodex#readme",
+  "keywords": ["xodex", "cli", "python", "wrapper"],
+  "engines": { "node": ">=18" }
+}
