@@ -1,4 +1,4 @@
-# CLI Agente de IA (Python) – OpenAI | Gemini | Grok
+# Xodex AI – OpenAI | Gemini | Grok
 
 Agente de programação para terminal, com seleção de provedor e ferramentas básicas (ler/escrever arquivos, executar comandos) e injeção de **contexto de projeto** por glob.
 
