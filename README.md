@@ -1,9 +1,17 @@
-# Xodex (CLI Python) – DeepSeek (default) + OpenAI/Gemini/Grok
+# Xodex – DeepSeek (default) + OpenAI/Gemini/Grok
 
 Xodex é um agente de programação para terminal. **DeepSeek** é o provedor padrão (economy), mas você também pode usar **OpenAI**, **Gemini** ou **Grok**.
 
-![Xodex Logo](assets/logo_wordmark.png)
-![Xodex Badge](assets/badge_xodex.png)
+<p align="center">
+  <img src="assets/logo_wordmark.png" alt="Xodex" width="420" />
+</p>
+
+<p align="center">
+  <img src="assets/badge_xodex.png" alt="Xodex • CLI" width="420" />
+</p>
+
+<details>
+  <summary>ASCII logo (clique para expandir)</summary>
 
 ```txt
  __   __           _           
@@ -12,7 +20,7 @@ Xodex é um agente de programação para terminal. **DeepSeek** é o provedor pa
    | | (_) | |_| || | | | (_| |
    |_|\___/ \__,_||_| |_|\__,_|
               XODEX  •  CLI
-```
+
 
 ## Providers & Perfis
 - **DeepSeek (default)** — custo mínimo e excelente para código/raciocínio.
