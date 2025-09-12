@@ -21,4 +21,4 @@ dependencies = [
 xodex = "xodex.__main__:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["xodex"]
+packages = ["src/xodex"]
