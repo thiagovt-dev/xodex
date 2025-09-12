@@ -5,3 +5,4 @@ prompt_toolkit==3.0.47
 requests==2.32.3
 platformdirs>=4.2.0
 keyring>=25.0.0
+pytest>=8.0.0
