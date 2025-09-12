@@ -1,7 +1,7 @@
 python-dotenv==1.1.1
 openai==1.107.2
 google-generativeai==0.8.5
-prompt_toolkit==3.0.47
+prompt_toolkit==3.0.52
 requests==2.32.5
 platformdirs>=4.2.0
 keyring>=25.0.0
