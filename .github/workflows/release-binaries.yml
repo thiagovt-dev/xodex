@@ -43,7 +43,7 @@ jobs:
       - name: Build (PyInstaller)
         shell: bash
         run: |
-          ENTRY="xodex/__main__.py"
+          ENTRY="src/xodex/__main__.py"
           # se seu pacote estiver em src/xodex/, use: ENTRY="src/xodex/__main__.py"
           pyinstaller -F -n xodex "$ENTRY" \
             --collect-all keyring \
