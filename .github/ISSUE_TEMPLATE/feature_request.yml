@@ -1,0 +1,11 @@
+name: Feature request
+description: Sugira uma ideia para o Xodex
+labels: [enhancement]
+body:
+  - type: textarea
+    attributes: {label: Problema/Contexto}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: Solução desejada}
+  - type: textarea
+    attributes: {label: Alternativas consideradas}

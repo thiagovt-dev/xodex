@@ -125,5 +125,58 @@ Troque depois com `xodex setup`.
 
 ---
 
+---
+
+## 👨‍💻 Sobre o Desenvolvedor
+
+**Xodex** foi desenvolvido por [Thiago Vasconcelos](https://github.com/thiagovt-dev), um desenvolvedor Full-Stack apaixonado por criar soluções inovadoras.
+
+🔭 **Sobre mim:**
+- Desenvolvedor Full-Stack com foco em desenvolvimento web
+- Estudante de Ciência da Computação
+- Sempre em busca de novos conhecimentos e tecnologias
+- Trabalho na GAPTech Solutions
+
+🌱 **Objetivo:** Criar soluções para problemas reais usando tecnologia e continuar aprendendo novas ferramentas.
+
+---
+
+## 🤝 Contribuindo
+
+Contribuições são muito bem-vindas! Este projeto está aberto para a comunidade e aceita:
+
+- 🐛 **Reportes de bugs**
+- ✨ **Sugestões de novas funcionalidades**
+- 📝 **Melhorias na documentação**
+- 🔧 **Novos providers de IA**
+- 🧪 **Testes e melhorias de qualidade**
+
+### Como contribuir:
+
+1. **Fork** o repositório
+2. **Clone** seu fork: `git clone https://github.com/SEU_USUARIO/xodex.git`
+3. **Crie** uma branch: `git checkout -b feature/nova-funcionalidade`
+4. **Faça** suas alterações seguindo o [guia de contribuição](CONTRIBUTING.md)
+5. **Teste** suas mudanças: `ruff check . && black --check . && pytest`
+6. **Commit** com Conventional Commits: `git commit -m "feat: adiciona novo provider"`
+7. **Push** para sua branch: `git push origin feature/nova-funcionalidade`
+8. **Abra** um Pull Request
+
+### Padrões de código:
+- **Formatação:** Black
+- **Lint:** Ruff
+- **Testes:** Pytest
+- **Commits:** Conventional Commits
+
+📖 **Leia mais:** [CONTRIBUTING.md](CONTRIBUTING.md) | [Código de Conduta](CODE_OF_CONDUCT.md) | [Política de Segurança](SECURITY.md)
+
+---
+
+## ⚠️ Aviso Legal
+
+**Xodex não é afiliado a OpenAI, Google, xAI, DeepSeek ou qualquer outro provedor de IA.** Este é um projeto independente desenvolvido pela comunidade.
+
+---
+
 ### Créditos
 

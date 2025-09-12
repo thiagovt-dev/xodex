@@ -1,0 +1,13 @@
+name: Bug report
+description: Reporte um problema no Xodex
+labels: [bug]
+body:
+  - type: textarea
+    attributes: {label: Descrição, placeholder: O que aconteceu?}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: Passos para reproduzir}
+  - type: input
+    attributes: {label: SO/Versão do Xodex}
+  - type: textarea
+    attributes: {label: Logs relevantes}
