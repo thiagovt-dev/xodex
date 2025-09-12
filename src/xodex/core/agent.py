@@ -14,8 +14,10 @@ PROV_MAP = {
     "deepseek": deepseek_provider,
 }
 
+
 def _provider():
     return PROV_MAP.get(cfg["provider"], deepseek_provider)
+
 
 def current_model() -> str:
     """Retorna a string do modelo efetivo com base no provider selecionado."""
@@ -30,8 +32,10 @@ def current_model() -> str:
         return cfg["grok"]["model"]
     return "unknown-model"
 
+
 def current_provider() -> str:
     return cfg["provider"]
+
 
 async def respond(history: List[Message], stream: bool = True):
     ctx = build_context()

@@ -125,21 +125,6 @@ Troque depois com `xodex setup`.
 
 ---
 
----
-
-## 👨‍💻 Sobre o Desenvolvedor
-
-**Xodex** foi desenvolvido por [Thiago Vasconcelos](https://github.com/thiagovt-dev), um desenvolvedor Full-Stack apaixonado por criar soluções inovadoras.
-
-🔭 **Sobre mim:**
-- Desenvolvedor Full-Stack com foco em desenvolvimento web
-- Estudante de Ciência da Computação
-- Sempre em busca de novos conhecimentos e tecnologias
-- Trabalho na GAPTech Solutions
-
-🌱 **Objetivo:** Criar soluções para problemas reais usando tecnologia e continuar aprendendo novas ferramentas.
-
----
 
 ## 🤝 Contribuindo
 
@@ -180,3 +165,4 @@ Contribuições são muito bem-vindas! Este projeto está aberto para a comunida
 
 ### Créditos
 
+**Xodex** foi desenvolvido por [Thiago Vasconcelos](https://github.com/thiagovt-dev), um desenvolvedor Full-Stack apaixonado por criar soluções inovadoras.
