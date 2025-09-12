@@ -3,23 +3,13 @@
 Xodex é um agente de programação para terminal. **DeepSeek** é o provedor padrão (economy), mas você também pode usar **OpenAI**, **Gemini** ou **Grok**.
 
 <p align="center">
-  <img src="assets/logo_wordmark.png" alt="Xodex" width="420" />
+  <img src="assets/logo_wordmark.png" alt="Xodex" width="380" />
 </p>
 
 <p align="center">
-  <img src="assets/badge_xodex.png" alt="Xodex • CLI" width="420" />
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" alt="Python 3.10+"></a>
+  <a href="#"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT"></a>
 </p>
-
-<details>
-  <summary>ASCII logo (clique para expandir)</summary>
-
-```txt
- __   __           _           
- \ \ / /__  _   _ | |__   ____ 
-  \ V / _ \| | | || '_ \ / _  |
-   | | (_) | |_| || | | | (_| |
-   |_|\___/ \__,_||_| |_|\__,_|
-              XODEX  •  CLI
 
 
 ## Providers & Perfis
