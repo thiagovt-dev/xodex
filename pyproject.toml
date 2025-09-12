@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "xodex-cli"
+version = "0.1.0"
+description = "CLI Agente de IA (OpenAI | Gemini | Grok) para terminal, com contexto de projeto e ferramentas de dev."
+authors = [{ name = "xodex-cli" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "python-dotenv>=1.0.1",
+    "openai>=1.51.2",
+    "google-generativeai>=0.7.2",
+    "prompt_toolkit>=3.0.47",
+    "requests>=2.32.3",
+]
+
+[project.scripts]
+xodex = "xodex.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["xodex"]

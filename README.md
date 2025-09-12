@@ -1,6 +1,6 @@
-# Xodex AI – OpenAI | Gemini | Grok
+# Xodex (CLI Python) – OpenAI | Gemini | Grok
 
-Agente de programação para terminal, com seleção de provedor e ferramentas básicas (ler/escrever arquivos, executar comandos) e injeção de **contexto de projeto** por glob.
+Xodex é um agente de programação para terminal, com seleção de provedor e ferramentas básicas (ler/escrever arquivos, executar comandos) e injeção de **contexto de projeto** por glob.
 
 ## Requisitos
 - Python 3.10+
@@ -38,4 +38,27 @@ python src/main.py
 - Selecione o provedor em `AGENT_PROVIDER` (`openai`, `gemini`, `grok`).
 - Ajuste `CONTEXT_GLOBS` e `MAX_CONTEXT_CHARS` para o tamanho do contexto injetado no prompt.
 
+## Notas de segurança
+- `:tool run` pede confirmação por padrão. Para comandos destrutivos, revise e confirme conscientemente.
 
+
+---
+
+## Instalação global via `pipx`
+```bash
+pipx install .
+# depois
+xodex
+```
+
+Para atualizar a partir de um diretório local:
+```bash
+pipx reinstall xodex-cli --pip-args='-U .'
+```
+
+## Uso com Docker
+```bash
+docker build -t xodex-cli:local .
+docker run --rm -it --env-file .env -v "$PWD":/work -w /work xodex-cli:local
+```
+Dica: monte seu repositório em `/work` para o agente ter acesso ao contexto e às ferramentas (`:tool run`, `:git ...`).
