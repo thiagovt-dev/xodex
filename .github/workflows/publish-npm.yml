@@ -30,7 +30,13 @@ jobs:
 
       - name: Setar versão do package.json a partir da tag
         run: |
-          npm version ${{ steps.getver.outputs.version }} --no-git-tag-version
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          TARGET_VERSION="${{ steps.getver.outputs.version }}"
+          if [ "$CURRENT_VERSION" != "$TARGET_VERSION" ]; then
+            npm version $TARGET_VERSION --no-git-tag-version
+          else
+            echo "Version $TARGET_VERSION already set in package.json"
+          fi
 
       - name: Node para npmjs
         uses: actions/setup-node@v4
