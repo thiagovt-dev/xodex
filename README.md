@@ -47,7 +47,7 @@ chmod +x xodex
 
 </details>
 
----
+<!-- ---
 
 <details>
 <summary><strong>🍺 Homebrew (em breve)</strong></summary>
@@ -59,19 +59,77 @@ brew tap thiagovt-dev/xodex
 brew install xodex
 xodex
 ```
+</details> -->
+
+---
+
+<details>
+<summary><strong>📦 NPM</strong></summary>
+
+Instale o wrapper globalmente e rode o Xodex:
+
+```bash
+npm i -g @thiagovt-dev/xodex-cli
+xodex --help
+```
+
+✅ Na **primeira execução**, o wrapper prepara automaticamente o core em Python
+(preferindo **pipx**; sem necessidade de venv).
+Requisitos: **Node >= 18** e **Python >= 3.8** no sistema.
+
+</details>
+
+<details>
+<summary><strong>🛠️ Dicas (Linux/PEP 668)</strong></summary>
+
+Se aparecer aviso de "externally-managed environment", instale o <code>pipx</code>:
+
+```bash
+sudo apt update && sudo apt install -y pipx
+pipx ensurepath
+exec $SHELL -l
+```
+
+Depois, basta rodar:
+
+```bash
+xodex --help
+```
+
+</details>
+
+<details>
+<summary><strong>⬆️ Atualizar</strong></summary>
+
+```bash
+npm i -g @thiagovt-dev/xodex-cli@latest
+# (opcional) atualizar o core Python gerenciado pelo pipx
+pipx upgrade xodex || pipx install xodex-cli --force
+```
+
 </details>
 
 ---
 
 <details>
-<summary><strong>📦 NPM (em breve)</strong></summary>
+<summary><strong>🐍 PyPI</strong></summary>
 
-Quando o wrapper estiver publicado:
+Instale diretamente do PyPI:
 
 ```bash
-npm i -g xodex-cli
-xodex
+pip install xodex-cli
+xodex --help
 ```
+
+**Recomendado:** use `pipx` para evitar conflitos com outros pacotes:
+
+```bash
+pipx install xodex-cli
+xodex --help
+```
+
+> 💡 **Dica:** O `pipx` isola o Xodex em seu próprio ambiente virtual, evitando conflitos de dependências.
+
 </details>
 
 ---
