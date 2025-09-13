@@ -91,10 +91,8 @@ function run() {
     process.exit(1);
   }
 
-  // 1) Se já dá pra rodar com pipx, prefira pipx
   if (canRunPipxXodex()) return runViaPipx(args);
 
-  // 2) Se o Python atual enxerga o módulo, rode com python -m
   if (hasPythonModule(pyCmd, "xodex")) {
     const p = spawn(pyCmd, ["-m", "xodex", ...args], { stdio: "inherit", shell: process.platform === "win32" });
     p.on("exit", (code) => process.exit(code));
@@ -102,7 +100,6 @@ function run() {
     return;
   }
 
-  // 3) Instalar (pipx -> pip) e executar
   const ok = tryInstall(pyCmd);
   if (ok && hasPythonModule(pyCmd, "xodex")) {
     const p = spawn(pyCmd, ["-m", "xodex", ...args], { stdio: "inherit", shell: process.platform === "win32" });
