@@ -15,11 +15,16 @@ npm i -g @thiagovt-dev/xodex-cli
 ```
 
 O comando `xodex` ficará disponível globalmente.  
-Na primeira execução, caso o core Python ainda não esteja instalado, o wrapper tentará instalá-lo automaticamente usando `pipx` ou `pip`.
+Na primeira execução, caso o core Python ainda não esteja instalado, o wrapper tentará instalá-lo automaticamente usando múltiplas estratégias:
+
+1. **pipx** (recomendado para ambientes isolados)
+2. **pip com --break-system-packages** (para ambientes externamente gerenciados como Ubuntu/Debian)
+3. **pip --user** (instalação tradicional)
 
 Requisitos:
 - **Node.js >= 18**
 - **Python 3.8+** disponível no sistema
+- **pipx** (opcional, mas recomendado para melhor isolamento)
 
 ---
 
@@ -36,6 +41,53 @@ xodex run
 
 # verificar versão
 xodex --version
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Erro "externally-managed-environment"
+
+Se você encontrar o erro `externally-managed-environment` (comum em Ubuntu/Debian), o wrapper tentará automaticamente usar `--break-system-packages`. Se ainda assim falhar, instale manualmente:
+
+```bash
+# Opção 1: Usando pipx (recomendado)
+pipx install xodex
+
+# Opção 2: Usando pip com --break-system-packages
+python3 -m pip install --break-system-packages xodex
+
+# Opção 3: Instalação tradicional
+python3 -m pip install --user xodex
+```
+
+### Python não encontrado
+
+Se o Python não for encontrado, instale-o:
+
+```bash
+# Ubuntu/Debian
+sudo apt update && sudo apt install python3 python3-pip
+
+# macOS (com Homebrew)
+brew install python
+
+# Windows
+# Baixe do site oficial: https://www.python.org/downloads/
+```
+
+### Instalar pipx (recomendado)
+
+```bash
+# Ubuntu/Debian
+sudo apt install pipx
+
+# macOS
+brew install pipx
+
+# Windows
+pip install pipx
 ```
 
 ---
