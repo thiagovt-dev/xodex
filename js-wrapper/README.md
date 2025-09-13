@@ -53,13 +53,13 @@ Se você encontrar o erro `externally-managed-environment` (comum em Ubuntu/Debi
 
 ```bash
 # Opção 1: Usando pipx (recomendado)
-pipx install xodex
+pipx install xodex-cli
 
 # Opção 2: Usando pip com --break-system-packages
-python3 -m pip install --break-system-packages xodex
+python3 -m pip install --break-system-packages xodex-cli
 
 # Opção 3: Instalação tradicional
-python3 -m pip install --user xodex
+python3 -m pip install --user xodex-cli
 ```
 
 ### Python não encontrado

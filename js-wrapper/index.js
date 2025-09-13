@@ -31,7 +31,7 @@ function tryInstall(pyCmd) {
   // Try pipx first (recommended for externally managed environments)
   if (hasCommand("pipx")) {
     console.log("[xodex-cli] Instalando via pipx...");
-    const r = spawnSync("pipx", ["install", "xodex"], { stdio: "inherit", shell: process.platform === "win32" });
+    const r = spawnSync("pipx", ["install", "xodex-cli"], { stdio: "inherit", shell: process.platform === "win32" });
     if (r.status === 0) return true;
     console.log("[xodex-cli] pipx falhou, tentando outras opções...");
   }
@@ -39,14 +39,14 @@ function tryInstall(pyCmd) {
   // Try pip with --break-system-packages flag (for externally managed environments)
   if (hasCommand("pip")) {
     console.log("[xodex-cli] Instalando via pip com --break-system-packages...");
-    const r = spawnSync("pip", ["install", "--break-system-packages", "xodex"], { stdio: "inherit", shell: process.platform === "win32" });
+    const r = spawnSync("pip", ["install", "--break-system-packages", "xodex-cli"], { stdio: "inherit", shell: process.platform === "win32" });
     if (r.status === 0) return true;
   }
 
   // Try python -m pip with --break-system-packages flag
   if (pyCmd) {
     console.log("[xodex-cli] Instalando via 'python -m pip' com --break-system-packages...");
-    const r = spawnSync(pyCmd, ["-m", "pip", "install", "--break-system-packages", "xodex"], {
+    const r = spawnSync(pyCmd, ["-m", "pip", "install", "--break-system-packages", "xodex-cli"], {
       stdio: "inherit",
       shell: process.platform === "win32",
     });
@@ -56,13 +56,13 @@ function tryInstall(pyCmd) {
   // Try traditional user installation as last resort
   if (hasCommand("pip")) {
     console.log("[xodex-cli] Tentando instalação tradicional (modo usuário)...");
-    const r = spawnSync("pip", ["install", "--user", "xodex"], { stdio: "inherit", shell: process.platform === "win32" });
+    const r = spawnSync("pip", ["install", "--user", "xodex-cli"], { stdio: "inherit", shell: process.platform === "win32" });
     if (r.status === 0) return true;
   }
 
   if (pyCmd) {
     console.log("[xodex-cli] Tentando instalação tradicional via 'python -m pip' (modo usuário)...");
-    const r = spawnSync(pyCmd, ["-m", "pip", "install", "--user", "xodex"], {
+    const r = spawnSync(pyCmd, ["-m", "pip", "install", "--user", "xodex-cli"], {
       stdio: "inherit",
       shell: process.platform === "win32",
     });
@@ -72,11 +72,11 @@ function tryInstall(pyCmd) {
   console.error(
     "\n[xodex-cli] Falha ao instalar automaticamente.\n" +
     "Instale manualmente e tente de novo:\n" +
-    "  pipx install xodex\n" +
+    "  pipx install xodex-cli\n" +
     "  # ou (para ambientes externamente gerenciados)\n" +
-    `  ${pyCmd || "python"} -m pip install --break-system-packages xodex\n` +
+    `  ${pyCmd || "python"} -m pip install --break-system-packages xodex-cli\n` +
     "  # ou (instalação tradicional)\n" +
-    `  ${pyCmd || "python"} -m pip install --user xodex\n`
+    `  ${pyCmd || "python"} -m pip install --user xodex-cli\n`
   );
   return false;
 }
