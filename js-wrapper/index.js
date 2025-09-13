@@ -27,7 +27,16 @@ function hasPythonModule(pyCmd, mod) {
 
 function canRunPipxXodex() {
   if (!hasCommand("pipx")) return false;
-  const r = spawnSync("pipx", ["run", "xodex", "--version"], {
+
+  // 1) tenta 'pipx run xodex --version'
+  let r = spawnSync("pipx", ["run", "xodex", "--version"], {
+    stdio: "ignore",
+    shell: process.platform === "win32",
+  });
+  if (r.status === 0) return true;
+
+  // 2) tenta 'pipx run --spec xodex-cli xodex --version'
+  r = spawnSync("pipx", ["run", "--spec", "xodex-cli", "xodex", "--version"], {
     stdio: "ignore",
     shell: process.platform === "win32",
   });
@@ -35,10 +44,19 @@ function canRunPipxXodex() {
 }
 
 function runViaPipx(args) {
-  const p = spawn("pipx", ["run", "xodex", ...args], { stdio: "inherit", shell: process.platform === "win32" });
+  let probe = spawnSync("pipx", ["run", "xodex", "--version"], {
+    stdio: "ignore",
+    shell: process.platform === "win32",
+  });
+  const cmd = probe.status === 0
+    ? ["run", "xodex", ...args]
+    : ["run", "--spec", "xodex-cli", "xodex", ...args];
+
+  const p = spawn("pipx", cmd, { stdio: "inherit", shell: process.platform === "win32" });
   p.on("exit", (code) => process.exit(code));
   p.on("error", () => process.exit(1));
 }
+
 
 function installViaPipx() {
   if (!hasCommand("pipx")) return false;
