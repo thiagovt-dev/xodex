@@ -2,7 +2,7 @@
 import asyncio
 from xodex.repl import start_repl
 from xodex.config import cfg
-from xodex.setup import ensure_config_ready, run_first_time_setup
+from xodex.setup import ensure_config_ready
 
 
 def run_interactive():
