@@ -54,14 +54,11 @@ function installViaPipx() {
 }
 
 function installWithPip(pyCmd, pkg) {
-  // tenta --user sem cache
   let r = spawnSync(pyCmd, ["-m", "pip", "install", "--upgrade", "--no-cache-dir", "--user", pkg], {
     stdio: "inherit",
     shell: process.platform === "win32",
   });
   if (r.status === 0) return true;
-
-  // em Linux com PEP 668, tenta --break-system-packages
   if (process.platform !== "win32") {
     r = spawnSync(pyCmd, ["-m", "pip", "install", "--upgrade", "--no-cache-dir", "--break-system-packages", pkg], {
       stdio: "inherit",
@@ -73,12 +70,8 @@ function installWithPip(pyCmd, pkg) {
 }
 
 function tryInstall(pyCmd) {
-  console.log("[xodex-cli] Módulo Python 'xodex' não encontrado. Tentando instalar...");
-
-  // 1) pipx (preferido)
+  console.log("[xodex-cli] Preparando Xodex (Python)...");
   if (installViaPipx()) return true;
-
-  // 2) python -m pip (xodex -> xodex-cli)
   for (const pkg of ["xodex", "xodex-cli"]) {
     console.log(`[xodex-cli] Instalando via python -m pip (${pkg})...`);
     if (installWithPip(pyCmd, pkg)) return true;
@@ -93,15 +86,15 @@ function run() {
   if (!pyCmd) {
     console.error(
       "[xodex-cli] Python não encontrado no sistema.\n" +
-      "Instale o Python e tente novamente:\n" +
-      "  • Windows: https://www.python.org/downloads/windows/ (marque 'Add Python to PATH')\n" +
-      "  • macOS:   brew install python\n" +
-      "  • Linux:   use o gerenciador de pacotes da sua distro\n"
+      "Instale o Python e tente novamente."
     );
     process.exit(1);
   }
 
-  // 1) Se o módulo 'xodex' já está acessível pelo Python atual → use-o
+  // 1) Se já dá pra rodar com pipx, prefira pipx
+  if (canRunPipxXodex()) return runViaPipx(args);
+
+  // 2) Se o Python atual enxerga o módulo, rode com python -m
   if (hasPythonModule(pyCmd, "xodex")) {
     const p = spawn(pyCmd, ["-m", "xodex", ...args], { stdio: "inherit", shell: process.platform === "win32" });
     p.on("exit", (code) => process.exit(code));
@@ -109,31 +102,20 @@ function run() {
     return;
   }
 
-  // 2) Se pipx consegue rodar → use pipx run
-  if (canRunPipxXodex()) {
-    return runViaPipx(args);
-  }
-
-  // 3) Tentar instalar (pipx → pip)
+  // 3) Instalar (pipx -> pip) e executar
   const ok = tryInstall(pyCmd);
-
-  // 4) Após instalar: preferir Python do sistema; se não deu, tentar pipx run
   if (ok && hasPythonModule(pyCmd, "xodex")) {
     const p = spawn(pyCmd, ["-m", "xodex", ...args], { stdio: "inherit", shell: process.platform === "win32" });
     p.on("exit", (code) => process.exit(code));
     p.on("error", () => process.exit(1));
     return;
   }
-  if (canRunPipxXodex()) {
-    return runViaPipx(args);
-  }
+  if (canRunPipxXodex()) return runViaPipx(args);
 
   console.error(
     "\n[xodex-cli] Não foi possível preparar o Xodex automaticamente.\n" +
-    "Opções manuais:\n" +
-    "  pipx install xodex       # ou: pipx install xodex-cli\n" +
-    `  ${pyCmd || "python"} -m pip install --user xodex   # ou: xodex-cli\n` +
-    (process.platform !== "win32" ? `  ${pyCmd || "python"} -m pip install --break-system-packages xodex\n` : "")
+    "Instale manualmente e tente novamente:\n" +
+    "  pipx install xodex   # ou: pipx install xodex-cli\n"
   );
   process.exit(1);
 }
