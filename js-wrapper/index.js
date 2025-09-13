@@ -109,14 +109,6 @@ function run() {
     process.exit(1);
   }
 
-  // Check if xodex is already available in PATH and run directly
-  if (hasCommand("xodex")) {
-    const p = spawn("xodex", args, { stdio: "inherit", shell: process.platform === "win32" });
-    p.on("exit", (code) => process.exit(code));
-    p.on("error", () => process.exit(1));
-    return;
-  }
-
   if (canRunPipxXodex()) return runViaPipx(args);
 
   if (hasPythonModule(pyCmd, "xodex")) {
