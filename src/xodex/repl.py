@@ -13,22 +13,24 @@ from xodex.core import tools as Tools
 Message = Dict[str, str]
 
 AGENT_MODE = False
+ASK_MODE = False  # Nova variável para controlar o modo ask
 
 HELP = (
-    "\033[1mComandos disponíveis:\033[0m\n\n"
-    "\033[36m/quit\033[0m                    sair do CLI\n"
-    "\033[36m/clear\033[0m                   limpar histórico da conversa\n"
-    "\033[36m/help\033[0m                    mostrar esta ajuda\n"
-    "\033[36m/status\033[0m                  status do repositório git\n"
-    "\033[36m/branches\033[0m                listar branches do git\n"
-    "\033[36m/checkout <branch>\033[0m       trocar para uma branch\n"
-    "\033[36m/new-branch <nome>\033[0m       criar e mudar para nova branch\n"
-    '\033[36m/commit "mensagem"\033[0m      fazer commit com -A\n'
-    "\033[36m/read <arquivo>\033[0m          ler conteúdo de um arquivo\n"
-    "\033[36m/write <arquivo>\033[0m         escrever arquivo (terminar com EOF)\n"
-    "\033[36m/run <comando>\033[0m           executar comando (pede confirmação)\n"
-    "\033[36m/ask <texto>\033[0m            perguntar ao modelo (sem histórico)\n"
-    "\033[36m/agent\033[0m                   alternar modo agente\n"
+    "Comandos disponíveis:\n\n"
+    "/quit                    sair do CLI\n"
+    "/clear                   limpar histórico da conversa\n"
+    "/help                    mostrar esta ajuda\n"
+    "/status                  status do repositório git\n"
+    "/branches                listar branches do git\n"
+    "/checkout <branch>       trocar para uma branch\n"
+    "/new-branch <nome>       criar e mudar para nova branch\n"
+    '/commit "mensagem"       fazer commit com -A\n'
+    "/read <arquivo>          ler conteúdo de um arquivo\n"
+    "/write <arquivo>         escrever arquivo (terminar com EOF)\n"
+    "/run <comando>           executar comando (pede confirmação)\n"
+    "/ask <texto>            perguntar ao modelo (sem histórico)\n"
+    "/agent                   alternar modo agente\n"
+    "/normal                  voltar ao modo normal\n"
 )
 
 
@@ -154,29 +156,47 @@ async def _handle_commit(cmd: str):
 
 
 async def _handle_ask(cmd: str):
+    global ASK_MODE
     parts = cmd.split(maxsplit=1)
     if len(parts) < 2:
-        print("uso: /ask <texto>")
+        print("💡 Modo ask ativado. Digite sua pergunta:")
+        ASK_MODE = True  # Ativar modo ask quando usado sem argumentos
         return
     question = parts[1]
+    
+    # Ativar modo ask temporariamente
+    ASK_MODE = True
+    
     try:
-        ans = await respond([{"role": "user", "content": question}], stream=False)
-        print(f"\033[36mXodex\033[0m> {ans}")
+        thinking = ThinkingIndicator()
+        thinking.start()
+        
+        await asyncio.sleep(0.3)
+        
+        ans = await respond([{"role": "user", "content": question}], stream=False, mode="ask")
+        
+        await thinking.stop()
+        
+        # Mostrar resposta de forma mais organizada
+        print(f"Xodex> {ans}")
     except Exception as e:
+        await thinking.stop()
         print(f"[erro] {e}")
+    finally:
+        ASK_MODE = False
 
 
 async def _handle_agent(_: str):
     global AGENT_MODE
     if AGENT_MODE:
         AGENT_MODE = False
-        print("Modo agente desativado.")
+        print("✓ Modo agente desativado")
         return
     if await _confirm("Permitir que o agente aplique alterações? [y/N] "):
         AGENT_MODE = True
-        print("Modo agente ativado.")
+        print("✓ Modo agente ativado")
     else:
-        print("(modo agente não ativado)")
+        print("✗ Modo agente não ativado")
 
 
 class ThinkingIndicator:
@@ -200,26 +220,34 @@ class ThinkingIndicator:
                 await self.task
             except asyncio.CancelledError:
                 pass
-        print("\r" + " " * 50 + "\r", end="", flush=True)
+        # Limpar a linha do thinking
+        print("\r\033[K", end="", flush=True)  # Limpa a linha atual
 
     async def _animate(self):
         thinking_chars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
-        print()
+        print()  # Nova linha para o thinking
 
         try:
             char_index = 0
             while self.is_running:
                 elapsed = int(time.time() - self.start_time)
                 char = thinking_chars[char_index % len(thinking_chars)]
-                print(
-                    f"\r\033[90m▌ {char} Working ({elapsed}s • Esc to interrupt)\033[0m",
-                    end="",
-                    flush=True,
-                )
+                message = f"{char} Pensando... ({elapsed}s)"
+                print(f"\r{message}", end="", flush=True)
                 char_index += 1
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(0.15)  # Timing balanceado
         except asyncio.CancelledError:
             pass
+
+
+def _get_mode_indicator():
+    """Retorna o indicador visual do modo ativo"""
+    if AGENT_MODE:
+        return "[AGENT] "
+    elif ASK_MODE:
+        return "[ASK] "
+    else:
+        return ""
 
 
 def _print_welcome():
@@ -227,15 +255,15 @@ def _print_welcome():
     print()
     print("🚀 Bem vindo ao Xodex CLI")
     print()
-    print(f"Você está usando o Xodex CLI em \033[90m{current_path}\033[0m")
+    print(f"📁 Diretório: {current_path}")
     print()
-    print("\033[90mPara iniciar, descreva uma task ou tente um dos comandos:\033[0m")
-    print("\033[90m/status - mostra status do repositório git\033[0m")
-    print("\033[90m/help - mostra todos os comandos disponíveis\033[0m")
-    print("\033[90m/run - executa um comando\033[0m")
-    print("\033[90m/ask - pergunta ao modelo\033[0m")
-    print("\033[90m/agent - alterna modo agente\033[0m")
-    print("\033[90m/quit - sai do CLI\033[0m")
+    print("💡 Dicas:")
+    print("   • Descreva uma task ou use um comando")
+    print(f"   • Digite \033[96m/help\033[0m para ver todos os comandos")
+    print(f"   • Use \033[92m/agent\033[0m para modo agente")
+    print(f"   • Use \033[95m/ask\033[0m para perguntas rápidas")
+    print()
+    print("─" * 50)
     print()
 
 
@@ -245,11 +273,13 @@ async def start_repl():
     _print_welcome()
     while True:
         try:
+            mode_indicator = _get_mode_indicator()
             with patch_stdout():
+                print()  # Adiciona um espaço acima da mensagem
                 line = await session.prompt_async(
-                    "\n",
+                    f"{mode_indicator}",
                     placeholder=HTML(
-                        "<ansibrightblack>Pergunte algo ao Xodex</ansibrightblack>"
+                        "<ansibrightblack>Digite sua mensagem ou comando...</ansibrightblack>"
                     ),
                 )
         except (EOFError, KeyboardInterrupt):
@@ -264,7 +294,7 @@ async def start_repl():
             break
         if text == "/clear":
             history.clear()
-            print("(histórico limpo)")
+            print("✓ Histórico limpo")
             continue
         if text == "/help":
             print(HELP)
@@ -278,8 +308,13 @@ async def start_repl():
         if text == "/agent":
             await _handle_agent(text)
             continue
-        if text.startswith("/ask "):
+        if text == "/ask" or text.startswith("/ask "):
             await _handle_ask(text)
+            continue
+        if text == "/normal":
+            global ASK_MODE
+            ASK_MODE = False
+            print("✓ Modo normal ativado")
             continue
         if text.startswith("/checkout "):
             await _handle_checkout(text)
@@ -300,7 +335,8 @@ async def start_repl():
             await _handle_run(text)
             continue
 
-        print(f"\n\033[34mUser\033[0m> {text}")
+        # Mostrar entrada do usuário de forma mais limpa
+        print(f"\n\033[1;34mUser>\033[0m {text}")
 
         history.append({"role": "user", "content": text})
 
@@ -309,13 +345,18 @@ async def start_repl():
         try:
             thinking.start()
 
-            await asyncio.sleep(0.2)
+            await asyncio.sleep(0.3)  # Pequeno delay para mostrar o thinking
 
-            stream_obj = await respond(history, stream=True)
+            # Determinar o modo para passar ao respond
+            mode = "agent" if AGENT_MODE else "normal"
+            stream_obj = await respond(history, stream=True, mode=mode)
 
             await thinking.stop()
 
-            print("\033[36mXodex\033[0m>", end=" ", flush=True)
+            # Mostrar resposta de forma mais organizada
+            print('\n\033[1;36mXodex>\033[0m', end=" ", flush=True)
+            
+            response_content = ""
             if hasattr(stream_obj, "__aiter__") or hasattr(stream_obj, "__iter__"):
                 try:
                     for chunk in stream_obj:  # type: ignore
@@ -341,16 +382,20 @@ async def start_repl():
                                 delta = s
                         if delta:
                             print(delta, end="", flush=True)
+                            response_content += delta
                 except TypeError:
                     async for chunk in stream_obj:
                         try:
                             print(chunk.text, end="", flush=True)
+                            response_content += chunk.text
                         except Exception:
                             pass
-                print()
+                print()  # Nova linha após a resposta
+                history.append({"role": "assistant", "content": response_content})
             else:
                 print(stream_obj)
                 history.append({"role": "assistant", "content": str(stream_obj)})
+                
         except Exception as e:
             await thinking.stop()
             print(f"\n[erro] {e}")

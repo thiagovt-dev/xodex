@@ -1,6 +1,6 @@
 {
   "name": "@thiagovt-dev/xodex-cli",
-  "version": "0.2.2",
+  "version": "0.2.5",
   "description": "CLI wrapper em Node.js para o Xodex (Python), permitindo instalação e execução do Xodex via npm de forma simples.",
   "bin": {
     "xodex": "index.js"
