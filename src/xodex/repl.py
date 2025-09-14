@@ -163,20 +163,22 @@ async def _handle_ask(cmd: str):
         ASK_MODE = True  # Ativar modo ask quando usado sem argumentos
         return
     question = parts[1]
-    
+
     # Ativar modo ask temporariamente
     ASK_MODE = True
-    
+
     try:
         thinking = ThinkingIndicator()
         thinking.start()
-        
+
         await asyncio.sleep(0.3)
-        
-        ans = await respond([{"role": "user", "content": question}], stream=False, mode="ask")
-        
+
+        ans = await respond(
+            [{"role": "user", "content": question}], stream=False, mode="ask"
+        )
+
         await thinking.stop()
-        
+
         # Mostrar resposta de forma mais organizada
         print(f"Xodex> {ans}")
     except Exception as e:
@@ -354,8 +356,8 @@ async def start_repl():
             await thinking.stop()
 
             # Mostrar resposta de forma mais organizada
-            print('\n\033[1;36mXodex>\033[0m', end=" ", flush=True)
-            
+            print("\n\033[1;36mXodex>\033[0m", end=" ", flush=True)
+
             response_content = ""
             if hasattr(stream_obj, "__aiter__") or hasattr(stream_obj, "__iter__"):
                 try:
@@ -395,7 +397,7 @@ async def start_repl():
             else:
                 print(stream_obj)
                 history.append({"role": "assistant", "content": str(stream_obj)})
-                
+
         except Exception as e:
             await thinking.stop()
             print(f"\n[erro] {e}")

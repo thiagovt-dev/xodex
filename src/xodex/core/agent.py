@@ -39,7 +39,7 @@ def current_provider() -> str:
 
 async def respond(history: List[Message], stream: bool = True, mode: str = "normal"):
     ctx = build_context()
-    
+
     # Adicionar informação sobre o modo ativo ao prompt do sistema
     mode_info = ""
     if mode == "agent":
@@ -48,8 +48,10 @@ async def respond(history: List[Message], stream: bool = True, mode: str = "norm
         mode_info = "\n\n[MODE: ASK] - Você está no modo ask. Responda apenas a pergunta específica sem aplicar alterações ou executar comandos."
     else:
         mode_info = "\n\n[MODE: NORMAL] - Você está no modo normal. Forneça orientações e sugestões, mas não aplique alterações automaticamente."
-    
-    system = SYSTEM_PROMPT + mode_info + (f"\n\n[PROJECT CONTEXT]\n{ctx}" if ctx else "")
+
+    system = (
+        SYSTEM_PROMPT + mode_info + (f"\n\n[PROJECT CONTEXT]\n{ctx}" if ctx else "")
+    )
     messages: List[Message] = [{"role": "system", "content": system}, *history]
     prov = _provider()
     return await prov.chat(messages, stream=stream)
