@@ -88,10 +88,10 @@ def run_first_time_setup() -> None:
     # 4) API key — sempre oferecer para configurar/atualizar
     existing = get_api_key(prov)
     if existing:
-        answer = input(
-            f"Deseja atualizar a API key para {prov}? [s/N]: "
-        ).strip().lower()
-        if answer in ("s", "sim", "y", "yes"): 
+        answer = (
+            input(f"Deseja atualizar a API key para {prov}? [s/N]: ").strip().lower()
+        )
+        if answer in ("s", "sim", "y", "yes"):
             key = _ask_api_key(prov)
             backend = set_api_key(prov, key)
             if backend == "file":

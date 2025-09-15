@@ -34,7 +34,11 @@ async def chat(messages: list[Message], stream: bool = True):
             else:
                 # Verificar safety ratings se a resposta foi bloqueada
                 if candidate.safety_ratings:
-                    blocked_reasons = [rating.category for rating in candidate.safety_ratings if rating.probability.name in ['HIGH', 'MEDIUM']]
+                    blocked_reasons = [
+                        rating.category
+                        for rating in candidate.safety_ratings
+                        if rating.probability.name in ["HIGH", "MEDIUM"]
+                    ]
                     if blocked_reasons:
                         return f"[erro] Resposta bloqueada por: {', '.join(blocked_reasons)}"
                 return "[erro] Resposta vazia ou inválida"

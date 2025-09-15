@@ -45,7 +45,8 @@ cfg = {
     "context": {
         "globs": [
             s.strip() for s in os.getenv("CONTEXT_GLOBS", "").split(",") if s.strip()
-        ] or [
+        ]
+        or [
             "README.md",
             "package.json",
             "pyproject.toml",
