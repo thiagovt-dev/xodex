@@ -105,10 +105,19 @@ def set_api_key(provider: str, key: str) -> str:
         keyring.set_password(SERVICE_NAME, provider, key)
         return "keyring"
     except Exception:
-        data = _read_json()
-        data.setdefault("keys", {})[provider] = key
-        _write_json(data)
-        return "file"
+        # Tenta um backend alternativo (criptografado em arquivo) se disponível
+        try:
+            from keyrings.alt.file import EncryptedKeyring  # type: ignore
+
+            keyring.set_keyring(EncryptedKeyring())
+            keyring.set_password(SERVICE_NAME, provider, key)
+            return "keyring"
+        except Exception:
+            # Fallback final: salvar em config.json
+            data = _read_json()
+            data.setdefault("keys", {})[provider] = key
+            _write_json(data)
+            return "file"
 
 
 def get_api_key(provider: str) -> Optional[str]:

@@ -26,4 +26,17 @@ async def chat(messages: list[Message], stream: bool = True):
         return res
     else:
         res = chat.send_message(sys)
-        return res.text
+        # Verificar se a resposta foi bloqueada ou se há conteúdo válido
+        if res.candidates and len(res.candidates) > 0:
+            candidate = res.candidates[0]
+            if candidate.content and candidate.content.parts:
+                return candidate.content.parts[0].text
+            else:
+                # Verificar safety ratings se a resposta foi bloqueada
+                if candidate.safety_ratings:
+                    blocked_reasons = [rating.category for rating in candidate.safety_ratings if rating.probability.name in ['HIGH', 'MEDIUM']]
+                    if blocked_reasons:
+                        return f"[erro] Resposta bloqueada por: {', '.join(blocked_reasons)}"
+                return "[erro] Resposta vazia ou inválida"
+        else:
+            return "[erro] Nenhuma resposta gerada"

@@ -85,8 +85,24 @@ def run_first_time_setup() -> None:
     cfg.providers[prov].model = model
     save_config(cfg)
 
-    # 4) API key
-    if not get_api_key(prov):
+    # 4) API key — sempre oferecer para configurar/atualizar
+    existing = get_api_key(prov)
+    if existing:
+        answer = input(
+            f"Deseja atualizar a API key para {prov}? [s/N]: "
+        ).strip().lower()
+        if answer in ("s", "sim", "y", "yes"): 
+            key = _ask_api_key(prov)
+            backend = set_api_key(prov, key)
+            if backend == "file":
+                print(
+                    "! Aviso: keyring indisponível — key salva no config.json (menos seguro)."
+                )
+            else:
+                print("✓ API key salva de forma segura (Keychain do sistema).")
+        else:
+            print("(Mantendo a API key atual.)")
+    else:
         key = _ask_api_key(prov)
         backend = set_api_key(prov, key)
         if backend == "file":

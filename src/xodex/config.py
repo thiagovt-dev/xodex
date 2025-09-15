@@ -45,7 +45,27 @@ cfg = {
     "context": {
         "globs": [
             s.strip() for s in os.getenv("CONTEXT_GLOBS", "").split(",") if s.strip()
+        ] or [
+            "README.md",
+            "package.json",
+            "pyproject.toml",
+            "requirements.txt",
+            "*.md",
+            "src/**/*.py",
+            "src/**/*.ts",
+            "src/**/*.js",
+            "src/**/*.tsx",
+            "src/**/*.jsx",
+            "*.json",
+            "*.yaml",
+            "*.yml",
+            "*.toml",
+            "*.env*",
+            "Dockerfile*",
+            "docker-compose*.yaml",
+            "docker-compose*.yml",
         ],
         "max_chars": int(os.getenv("MAX_CONTEXT_CHARS", "20000")),
     },
+    "system_prompt": os.getenv("XODEX_SYSTEM_PROMPT", ""),
 }

@@ -1,6 +1,6 @@
 from typing import Dict, List
 from xodex.config import cfg
-from xodex.prompts.system import SYSTEM_PROMPT
+from xodex.prompts.system import get_system_prompt
 from xodex.core.context import build_context
 from xodex.providers import openai_provider, gemini_provider, grok_provider
 from xodex.providers import deepseek_provider
@@ -47,10 +47,11 @@ async def respond(history: List[Message], stream: bool = True, mode: str = "norm
     elif mode == "ask":
         mode_info = "\n\n[MODE: ASK] - Você está no modo ask. Responda apenas a pergunta específica sem aplicar alterações ou executar comandos."
     else:
-        mode_info = "\n\n[MODE: NORMAL] - Você está no modo normal. Forneça orientações e sugestões, mas não aplique alterações automaticamente."
+        mode_info = "\n\n[MODE: NORMAL] - Você está no modo normal. Forneça orientações e sugestões, mas não aplique alterações automaticamente. IMPORTANTE: Sempre complete sua resposta com uma resposta final, mesmo que não possa executar comandos. Use seu conhecimento para dar a melhor resposta possível."
 
+    system_prompt = get_system_prompt()
     system = (
-        SYSTEM_PROMPT + mode_info + (f"\n\n[PROJECT CONTEXT]\n{ctx}" if ctx else "")
+        system_prompt + mode_info + (f"\n\n[PROJECT CONTEXT]\n{ctx}" if ctx else "")
     )
     messages: List[Message] = [{"role": "system", "content": system}, *history]
     prov = _provider()

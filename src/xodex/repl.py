@@ -359,6 +359,10 @@ async def start_repl():
             print("\n\033[1;36mXodex>\033[0m", end=" ", flush=True)
 
             response_content = ""
+            full_response = ""
+            in_reasoning = False
+            reasoning_started = False
+            
             if hasattr(stream_obj, "__aiter__") or hasattr(stream_obj, "__iter__"):
                 try:
                     for chunk in stream_obj:  # type: ignore
@@ -383,15 +387,44 @@ async def start_repl():
                             if s:
                                 delta = s
                         if delta:
+                            full_response += delta
+                            
+                            # Detectar início do raciocínio - mais simples e direto
+                            if not reasoning_started and ("vou" in delta.lower() or "i'll" in delta.lower() or "i'm" in delta.lower() or "estou" in delta.lower()):
+                                in_reasoning = True
+                                reasoning_started = True
+                                print("\033[90m", end="", flush=True)  # Cinza
+                            
+                            # Detectar fim do raciocínio - quando há uma resposta mais direta
+                            if in_reasoning and ("aqui está" in delta.lower() or "here is" in delta.lower() or "a resposta é" in delta.lower() or "the answer is" in delta.lower() or "encontrei" in delta.lower() or "found" in delta.lower()):
+                                in_reasoning = False
+                                print("\033[0m", end="", flush=True)  # Reset cor
+                            
                             print(delta, end="", flush=True)
                             response_content += delta
                 except TypeError:
                     async for chunk in stream_obj:
                         try:
-                            print(chunk.text, end="", flush=True)
-                            response_content += chunk.text
+                            chunk_text = chunk.text
+                            full_response += chunk_text
+                            
+                            # Aplicar mesma lógica de detecção de raciocínio
+                            if not reasoning_started and ("vou" in chunk_text.lower() or "i'll" in chunk_text.lower() or "i'm" in chunk_text.lower() or "estou" in chunk_text.lower()):
+                                in_reasoning = True
+                                reasoning_started = True
+                                print("\033[90m", end="", flush=True)  # Cinza
+                            
+                            if in_reasoning and ("aqui está" in chunk_text.lower() or "here is" in chunk_text.lower() or "a resposta é" in chunk_text.lower() or "the answer is" in chunk_text.lower() or "encontrei" in chunk_text.lower() or "found" in chunk_text.lower()):
+                                in_reasoning = False
+                                print("\033[0m", end="", flush=True)  # Reset cor
+                            
+                            print(chunk_text, end="", flush=True)
+                            response_content += chunk_text
                         except Exception:
                             pass
+                
+                # Garantir que a cor seja resetada no final
+                print("\033[0m", end="", flush=True)
                 print()  # Nova linha após a resposta
                 history.append({"role": "assistant", "content": response_content})
             else:

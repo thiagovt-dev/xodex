@@ -38,7 +38,7 @@ function findSemver(str) {
 
 function getWrapperVersion() {
   try {
-    const pkgPath = path.join(__dirname, "..", "package.json");
+    const pkgPath = path.join(__dirname, "package.json");
     const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
     return pkg.version || "unknown";
   } catch (_) {

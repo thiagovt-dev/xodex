@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "xodex-cli"
-version = "0.2.6"
-description = "CLI Agente de IA (OpenAI | Gemini | Grok) para terminal, com contexto de projeto e ferramentas de dev."
+version = "0.2.4"
+description = "CLI Agente de IA (DeepSeek | OpenAI | Gemini | Grok) para terminal, com contexto de projeto e ferramentas de dev."
 authors = [{ name = "xodex-cli" }]
 readme = "README.md"
 requires-python = ">=3.10"

@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 
 def load_xodex_cli_prompt():
@@ -14,4 +15,12 @@ def load_xodex_cli_prompt():
         return "You are Xodex, a coding agent. Please help with the task."
 
 
-SYSTEM_PROMPT = load_xodex_cli_prompt()
+def get_system_prompt():
+    """Get the system prompt, prioritizing custom prompt over default."""
+    custom_prompt = os.getenv("XODEX_SYSTEM_PROMPT", "")
+    if custom_prompt.strip():
+        return custom_prompt.strip()
+    return load_xodex_cli_prompt()
+
+
+SYSTEM_PROMPT = get_system_prompt()

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo_wordmark.png" alt="Xodex" width="380" />
+  <img src="https://raw.githubusercontent.com/thiagovt-dev/xodex/main/assets/logo_wordmark.png" alt="Xodex" width="380" />
 </p>
 
 <p align="center">
